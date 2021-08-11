@@ -22,18 +22,10 @@ public class NumberCruncher {
     }
 
     public int countPositive() {
-        int count = 0;
-        for (int number : numbers) {
-            if (number >= 0) count++;
-        }
-        return count;
+        return (int) Arrays.stream(numbers).filter(num -> num >= 0).count();
     }
 
     public int countNegative() {
-        int count = 0;
-        for (int number : numbers) {
-            if (number < 0) count++;
-        }
-        return count;
+        return (int) Arrays.stream(numbers).filter(num -> num < 0).count();
     }
 }
