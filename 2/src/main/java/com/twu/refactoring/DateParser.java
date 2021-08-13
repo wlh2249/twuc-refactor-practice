@@ -27,7 +27,6 @@ public class DateParser {
         calendar.set(Calendar.YEAR, getYear());
         calendar.set(Calendar.MONTH, getMonth() - 1);
         calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), getDate(), getHour(), getMinute(), 0);
-
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar.getTime();
     }
