@@ -21,7 +21,26 @@ public class Order {
         return address;
     }
 
-    public List<LineItem> getLineItems() {
-        return lineItemList;
+
+    public StringBuilder getOrderList() {
+        StringBuilder orderList = new StringBuilder();
+        lineItemList.forEach(lineItem ->
+                orderList.append(lineItem.getDescription())
+                        .append('\t')
+                        .append(lineItem.getPrice())
+                        .append('\t')
+                        .append(lineItem.getQuantity())
+                        .append('\t')
+                        .append(lineItem.totalAmount())
+                        .append('\n'));
+        return orderList;
+    }
+
+    public double getTotalAmount() {
+        return lineItemList.stream().mapToDouble(LineItem::totalAmount).sum() + getTotalTax();
+    }
+
+    public double getTotalTax() {
+        return lineItemList.stream().mapToDouble(LineItem::salesTax).sum();
     }
 }
