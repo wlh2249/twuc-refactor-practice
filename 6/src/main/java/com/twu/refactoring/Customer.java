@@ -2,6 +2,8 @@ package com.twu.refactoring;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Customer {
 
@@ -16,58 +18,45 @@ public class Customer {
 		rentalList.add(arg);
 	}
 
+	public void updateRental(Movie movie) {
+		Optional<Rental> oldRental = rentalList.stream().filter(rental -> rental.getMovie().getTitle().equals(movie.getTitle())).findAny();
+		oldRental.ifPresent(Rental -> Rental.setMovie(movie));
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public String statement() {
-		double totalAmount = 0;
-		int frequentRenterPoints = 0;
-		Iterator<Rental> rentals = rentalList.iterator();
+		final double[] totalAmount = {0};
+		final AtomicInteger frequentRenterPoints = new AtomicInteger();
 		StringBuilder result = new StringBuilder("Rental Record for " + getName() + "\n");
-		while (rentals.hasNext()) {
-			double thisAmount = 0;
-			Rental each = rentals.next();
+		rentalList.forEach(rental -> updateStatement(rental, totalAmount, frequentRenterPoints, result));
+		return addFooterLines(totalAmount[0], frequentRenterPoints, result);
+	}
 
-			thisAmount = getLineAmount(thisAmount, each);
-
-			// add frequent renter points
-			frequentRenterPoints++;
-			// add bonus for a two day new release rental
-			if ((each.getMovie().getPriceCode() == Movie.NEW_RELEASE)
-					&& each.getDaysRented() > 1)
-				frequentRenterPoints++;
-
-			// show figures for this rental
-			result.append("\t").append(each.getMovie().getTitle()).append("\t").append(thisAmount).append("\n");
-			totalAmount += thisAmount;
-
-		}
-		// add footer lines
-		result.append("Amount owed is ").append(totalAmount).append("\n");
+	private String addFooterLines(double d, AtomicInteger frequentRenterPoints, StringBuilder result) {
+		result.append("Amount owed is ").append(d).append("\n");
 		result.append("You earned ").append(frequentRenterPoints).append(" frequent renter points");
 		return result.toString();
 	}
 
-	private double getLineAmount(double thisAmount, Rental each) {
-		switch (each.getMovie().getPriceCode()) {
-		case Movie.REGULAR:
-			thisAmount = 2 + calculateAmountHelper(thisAmount, each, 2);
-			break;
-		case Movie.NEW_RELEASE:
-			thisAmount += each.getDaysRented() * 3;
-			break;
-		case Movie.CHILDREN:
-			thisAmount = 1.5 + calculateAmountHelper(thisAmount, each, 3);
-			break;
-		}
-		return thisAmount;
+	private void updateStatement(Rental rental, double[] totalAmount, AtomicInteger frequentRenterPoints, StringBuilder result) {
+		double amount = rental.getMovie().getAmount(rental.getDaysRented());
+		frequentRenterPoints.getAndIncrement();
+		addBonusForATwoDayNewReleaseRental(rental.getMovie(), rental.getDaysRented(), frequentRenterPoints);
+		totalAmount[0] += amount;
+		result.append("\t")
+				.append(rental.getMovie().getTitle())
+				.append("\t")
+				.append(amount)
+				.append("\n");
 	}
 
-	private double calculateAmountHelper(double thisAmount, Rental each, int daysRented) {
-		if (each.getDaysRented() > daysRented)
-			thisAmount += (each.getDaysRented() - daysRented) * 1.5;
-		return thisAmount;
+	private void addBonusForATwoDayNewReleaseRental(Movie movie, int rentDays, AtomicInteger frequentRenterPoints) {
+		if (movie instanceof NewReleaseMovie && rentDays > 1) {
+			frequentRenterPoints.getAndIncrement();
+		}
 	}
 
 }

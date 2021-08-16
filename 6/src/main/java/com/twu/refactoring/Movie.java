@@ -1,28 +1,10 @@
 package com.twu.refactoring;
 
-public class Movie {
-	public static final int CHILDREN = 2;
-	public static final int  REGULAR = 0;
-	public static final int  NEW_RELEASE = 1;
+public interface Movie {
 
-	private final String title;
-	private int priceCode;
+	double getAmount(int rentDays);
 
-	public Movie(String title, int priceCode) {
-		this.title = title;
-		this.priceCode = priceCode;
-	}
+	String getTitle();
 
-	public int getPriceCode() {
-		return priceCode;
-	}
-
-	public void setPriceCode(int arg) {
-    	priceCode = arg;
-	}
-
-	public String getTitle () {
-		return title;
-	}
 }
 
