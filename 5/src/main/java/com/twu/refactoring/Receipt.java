@@ -11,9 +11,7 @@ public class Receipt {
     }
 
     public double getTotalCost() {
-        double totalCost = 0;
-
-        totalCost += FIXED_CHARGE + taxi.getCost(totalCost);
+        double totalCost = FIXED_CHARGE + taxi.getCost();
 
         return totalCost * (1 + SALES_TAX_RATE);
     }
