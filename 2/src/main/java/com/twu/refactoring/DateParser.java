@@ -42,8 +42,7 @@ public class DateParser {
         } catch (StringIndexOutOfBoundsException e) {
             checkTimeUnitStringIllegal("Minute", 2);
         }
-        if (minute < 0 || minute > 59)
-            throw new IllegalArgumentException("Minute cannot be less than 0 or more than 59");
+        checkTime("Minute", minute, 0, 59);
         return minute;
 
     }
@@ -59,8 +58,7 @@ public class DateParser {
         } catch (StringIndexOutOfBoundsException e) {
             checkTimeUnitStringIllegal("Hour", 2);
         }
-        if (hour < 0 || hour > 23)
-            throw new IllegalArgumentException("Hour cannot be less than 0 or more than 23");
+        checkTime("Hour", hour, 0, 23);
         return hour;
 
     }
@@ -73,8 +71,7 @@ public class DateParser {
         } catch (StringIndexOutOfBoundsException e) {
             checkTimeUnitStringIllegal("Date", 2);
         }
-        if (date < 1 || date > 31)
-            throw new IllegalArgumentException("Date cannot be less than 1 or more than 31");
+        checkTime("Date", date, 1, 31);
         return date;
     }
 
@@ -86,8 +83,7 @@ public class DateParser {
         } catch (StringIndexOutOfBoundsException e) {
             checkTimeUnitStringIllegal("Month", 2);
         }
-        if (month < 1 || month > 12)
-            throw new IllegalArgumentException("Month cannot be less than 1 or more than 12");
+        checkTime("Month", month, 1, 12);
         return month;
     }
 
@@ -99,8 +95,7 @@ public class DateParser {
         } catch (StringIndexOutOfBoundsException e) {
             checkTimeUnitStringIllegal("Year", 4);
         }
-        if (year < 2000 || year > 2012)
-            throw new IllegalArgumentException("Year cannot be less than 2000 or more than 2012");
+        checkTime("Year", year, 2000, 2012);
         return year;
     }
 
@@ -113,5 +108,11 @@ public class DateParser {
 
     private void checkTimeUnitStringIllegal(String timeUnit, int characterNumber) {
         throw new IllegalArgumentException(timeUnit + " string is less than " + characterNumber + " characters");
+    }
+
+    private void checkTime(String timeUnit, int time, int start, int end) {
+        if (time < start || time > end) {
+            throw new IllegalArgumentException(timeUnit + " cannot be less than " + start + " or more than " + end);
+        }
     }
 }
