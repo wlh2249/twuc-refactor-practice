@@ -2,32 +2,22 @@ package com.twu.refactoring;
 
 public class Direction {
     private final char direction;
+    private CurrentDirection currentDirection;
 
     public Direction(char direction) {
         this.direction = direction;
     }
 
+    public void setCurrentDirection(CurrentDirection currentDirection) {
+        this.currentDirection = currentDirection;
+    }
+
     public Direction turnRight() {
-        return getDirection('E', 'W');
+        return currentDirection.turnRight();
     }
 
     public Direction turnLeft() {
-        return getDirection('W', 'E');
-    }
-
-    private Direction getDirection(char e, char w) {
-        switch (direction) {
-            case 'N':
-                return new Direction(e);
-            case 'S':
-                return new Direction(w);
-            case 'E':
-                return new Direction('N');
-            case 'W':
-                return new Direction('S');
-            default:
-                throw new IllegalArgumentException();
-        }
+        return currentDirection.turnLeft();
     }
 
     @Override
@@ -37,9 +27,7 @@ public class Direction {
 
         Direction direction1 = (Direction) o;
 
-        if (direction != direction1.direction) return false;
-
-        return true;
+        return direction == direction1.direction;
     }
 
     @Override
